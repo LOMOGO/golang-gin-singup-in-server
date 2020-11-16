@@ -16,6 +16,7 @@ func Signup(c *gin.Context) {
 	var user = dao.SignupUser{}
 	err := c.BindJSON(&user)
 	if err != nil {
+		//利用validata库进行接口值的校验
 		errs := err.(validator.ValidationErrors)
 		standardCode.ValidataError.Message = errs.Translate(validata.Trans)
 		standardCode.CodeFormatter(c, standardCode.ValidataError, nil)
@@ -50,7 +51,9 @@ func Signin(c *gin.Context) {
 	var user = &dao.SigninUser{}
 	err := c.BindJSON(user)
 	if err != nil {
-		log.Println("func signup: binding json err:", err)
+		errs := err.(validator.ValidationErrors)
+		standardCode.ValidataError.Message = errs.Translate(validata.Trans)
+		standardCode.CodeFormatter(c, standardCode.ValidataError, nil)
 		return
 	}
 	//在数据库中搜寻用户名是否存在
