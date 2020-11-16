@@ -6,6 +6,8 @@ import (
 )
 
 func main() {
-	router.Setup()
 	model.Setup()
+
+	r := router.InitRouter()
+	r.Run(":8080")
 }

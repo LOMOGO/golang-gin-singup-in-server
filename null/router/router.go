@@ -2,11 +2,10 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"log"
-	"server/handler"
+	v12 "server/handler/v1"
 )
 
-func Setup() {
+func InitRouter() *gin.Engine {
 	r := gin.Default()
 	v1 := r.Group("/api/v1")
 
@@ -14,13 +13,10 @@ func Setup() {
 	Authenticator := v1.Group("/auth")
 	{
 		//账号注册路由
-		Authenticator.POST("/signup", handler.Signup)
+		Authenticator.POST("/signup", v12.Signup)
 		//账号登陆路由
-		Authenticator.POST("/signin", handler.Signin)
+		Authenticator.POST("/signin", v12.Signin)
 	}
 
-	err := r.Run(":8080")
-	if err != nil {
-		log.Print(err)
-	}
+	return r
 }
