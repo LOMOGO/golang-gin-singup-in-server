@@ -11,8 +11,17 @@ type User struct {
 	Password string `gorm:"not null;unique;size:64"`
 }
 
-func (user *User) Insert() error {
-	tx := DB.Create(user)
+func (u *User) Insert() error {
+	tx := DB.Create(u)
+	err := tx.Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u *User) Select() error {
+	tx := DB.Where("name = ?", u.Name).First(u)
 	err := tx.Error
 	if err != nil {
 		return err
