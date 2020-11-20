@@ -1,3 +1,4 @@
+//定义user表
 package model
 
 import (

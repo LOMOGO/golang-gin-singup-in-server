@@ -1,3 +1,4 @@
+//用于验证接口值的合法性
 package validata
 
 import (

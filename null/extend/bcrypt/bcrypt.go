@@ -1,3 +1,4 @@
+//用于明文密码的加密解密
 package bcrypt
 
 import "golang.org/x/crypto/bcrypt"
