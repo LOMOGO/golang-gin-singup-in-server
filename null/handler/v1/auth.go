@@ -4,10 +4,9 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"log"
 	"server/dao"
-	"server/extend/bcrypt"
 	"server/extend/standardCode"
+	"server/extend/utils"
 	"server/extend/validata"
 )
 
@@ -15,6 +14,7 @@ import (
 func Signup(c *gin.Context) {
 	var user = dao.SignupUser{}
 	err := c.BindJSON(&user)
+	//因为gin中集成了validata，因此当接口中的参数不符合结构体中的banding条件时就会报错
 	if err != nil {
 		//利用validata库进行接口值的校验
 		errs := err.(validator.ValidationErrors)
@@ -31,11 +31,7 @@ func Signup(c *gin.Context) {
 		return
 	}
 	//将密码进行哈希加密
-	pwd, err := bcrypt.HashPassword(user.Password)
-	if err != nil {
-		log.Println("密码加密出错")
-		return
-	}
+	pwd := utils.MakeSha1(user.Password)
 	user.Password = pwd
 	//如果用户不存在，那么就存入数据库
 	err = user.StoreUser()
@@ -64,10 +60,11 @@ func Signin(c *gin.Context) {
 		return
 	}
 	//比较哈希密码与明文密码是否一致
-	if bcrypt.CompanyPassword(hashPwd, user.Password) {
+	if hashPwd == utils.MakeSha1(user.Password) {
 		standardCode.CodeFormatter(c, standardCode.Success, nil)
 	} else {
 		//用户名或密码错误
 		standardCode.CodeFormatter(c, standardCode.IllegalNameOrPwdError, nil)
 	}
+
 }
