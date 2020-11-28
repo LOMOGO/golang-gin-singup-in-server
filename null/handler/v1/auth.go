@@ -4,8 +4,10 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"log"
 	"server/dao"
 	"server/extend/standardCode"
+	"server/extend/token"
 	"server/extend/utils"
 	"server/extend/validata"
 )
@@ -24,7 +26,7 @@ func Signup(c *gin.Context) {
 	}
 
 	//在数据库中搜索用户名是否存在
-	_, err = dao.FindUserByName(user.Name)
+	_, _, err = dao.FindUserByName(user.Name)
 	if err == nil {
 		//标准化状态码
 		standardCode.CodeFormatter(c, standardCode.RepeatedUserError, nil)
@@ -53,18 +55,26 @@ func Signin(c *gin.Context) {
 		return
 	}
 	//在数据库中搜寻用户名是否存在
-	hashPwd, err := dao.FindUserByName(user.Name)
+	hashPwd, id, err := dao.FindUserByName(user.Name)
 	if err != nil {
 		//用户名或密码错误
 		standardCode.CodeFormatter(c, standardCode.IllegalNameOrPwdError, nil)
 		return
 	}
 	//比较哈希密码与明文密码是否一致
-	if hashPwd == utils.MakeSha1(user.Password) {
-		standardCode.CodeFormatter(c, standardCode.Success, nil)
-	} else {
+	if hashPwd != utils.MakeSha1(user.Password) {
 		//用户名或密码错误
 		standardCode.CodeFormatter(c, standardCode.IllegalNameOrPwdError, nil)
+		return
+	}
+	generateToken, err := token.GenerateToken(id.(uint), user.Name)
+	if err != nil {
+		log.Println("token生成失败", err)
+		standardCode.CodeFormatter(c, standardCode.TokenNotGenerate, nil)
+		return
 	}
 
+	standardCode.CodeFormatter(c, standardCode.Success, gin.H{
+		"token": generateToken,
+	})
 }

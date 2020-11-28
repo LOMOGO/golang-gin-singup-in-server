@@ -1,6 +1,10 @@
 package dao
 
-import "server/model"
+import (
+	"gorm.io/gorm"
+	"server/model"
+	"time"
+)
 
 type SignupUser struct {
 	Name string `json:"name" binding:"required" label:"昵称"`
@@ -24,19 +28,33 @@ func (s *SignupUser) StoreUser() error {
 }
 
 type SigninUser struct {
-	Name string `json:"name" binding:"required" label:"昵称"`
+	Name string `json:"name" binding:"required" label:"用户名"`
 	Password string `json:"password" binding:"required,max=16,min=8" label:"密码"`
 }
 
 //在数据库中搜寻该账户是否存在
-func FindUserByName(name string) (pwd string, err error) {
+func FindUserByName(name string) (pwd string, id interface{} , err error) {
 	user := model.User{
 		Name: name,
 	}
-	err = user.Select()
+	err = user.SelectByName()
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
-	return user.Password, nil
+	return user.Password, user.ID, nil
 }
 
+//利用用户ID来获取用户信息
+func UseIDGetInfo(id uint) (username string, gender string, createTime time.Time, err error) {
+	user := model.User{
+		Model: gorm.Model{
+			ID: id,
+		},
+	}
+	err = user.SelectByID()
+	if err != nil {
+		return "", "", time.Time{}, err
+	}
+	return user.Name, user.Gender, user.CreatedAt, nil
+
+}

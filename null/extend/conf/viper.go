@@ -13,9 +13,16 @@ type database struct {
 	Host string `mapstructure:"host"`
 	Port int `mapstructure:"port"`
 	Dbname string `mapstructure:"dbname"`
+	MaxIdleConn int `mapstructure:"maxidleconn"`
+	MaxOpenConn int `mapstructure:"maxopenconn"`
+}
+
+type jwt struct {
+	Key string `mapstructure:"key"`
 }
 
 var DatabaseConf = database{}
+var JwtConf = jwt{}
 
 func Setup() {
 	//当时写这个配置文件的时候差点没被气死，起初使用的是yaml类型的配置文件。代码和教程代码一致，也没报错，就是读不出来数据，我哭了啊。
@@ -34,6 +41,10 @@ func Setup() {
 	}
 	err = viper.UnmarshalKey("mysql", &DatabaseConf)
 	if err != nil {
-		log.Printf("配置数据绑定失败：%v", err)
+		log.Printf("数据库配置数据绑定失败：%v", err)
+	}
+	err = viper.UnmarshalKey("token", &JwtConf)
+	if err != nil {
+		log.Printf("jwt配置数据绑定失败：%v", err)
 	}
 }

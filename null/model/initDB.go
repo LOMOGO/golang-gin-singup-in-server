@@ -35,6 +35,6 @@ func Setup() {
 		panic(err)
 	}
 	sqlDB.SetConnMaxIdleTime(time.Minute * 4)
-	sqlDB.SetMaxOpenConns(100)
-	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetMaxOpenConns(conf.DatabaseConf.MaxOpenConn)
+	sqlDB.SetMaxIdleConns(conf.DatabaseConf.MaxIdleConn)
 }
