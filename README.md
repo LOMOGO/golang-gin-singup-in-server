@@ -2,6 +2,33 @@
 这个项目是用golang的gin框架写的一个server服务，功能是基本的账号注册、账号登陆、查看账号信息
 、修改账号密码。(CURD boy) 
 
+各个接口的请求的body或head示例如下：
+```
+signup接口:json：
+{
+    "name": "name",
+    "email": "email",
+    "password": "password",
+    "re_password": "password"
+}
+
+signin接口：json：
+{
+  "name": "name",
+  "password": "password"
+}
+
+getinfo接口：header需要：Authorization+token
+
+
+alterpwd接口：header需要：Authorization+token
+json：
+{
+    "old_password": "oldpwd",
+    "new_password": "newpwd"
+}
+```
+
 项目使用了以下几个库，通过本项目你可以学习以下几个库的基础使用：
 
 * gorm(orm)
