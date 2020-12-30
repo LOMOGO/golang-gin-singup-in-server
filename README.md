@@ -4,6 +4,16 @@
 
 各个接口的请求的body或head示例如下：
 ```
+ - using env:   export GIN_MODE=release
+ - using code:  gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /api/v1/auth/signup       --> server/handler/v1.Signup (3 handlers)
+[GIN-debug] POST   /api/v1/auth/signin       --> server/handler/v1.Signin (3 handlers)
+[GIN-debug] POST   /api/v1/user/getInfo      --> server/handler/v1.GetUserInfo (4 handlers)
+[GIN-debug] PATCH  /api/v1/user/alterPwd     --> server/handler/v1.AlterUserPwd (4 handlers)
+[GIN-debug] Listening and serving HTTP on :8080
+
+
 signup接口:json：
 {
     "name": "name",
